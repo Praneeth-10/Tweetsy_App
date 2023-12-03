@@ -1,6 +1,7 @@
 package com.lucifer.tweetsy.screens
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -21,32 +22,35 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.lucifer.tweetsy.viewModels.CategoryViewModel
 
 @Composable
-fun CategoryScreen() {
-    val categoryViewModel : CategoryViewModel = viewModel()
-    val categoriesss: State<List<String>> = categoryViewModel.categories.collectAsState()
+fun CategoryScreen(onClick : (category : String) -> Unit ) {
+    val categoryViewModel : CategoryViewModel = hiltViewModel()
+    val categorizes: State<List<String>> = categoryViewModel.categories.collectAsState()
 
     LazyVerticalGrid(columns = GridCells.Fixed(2),
         contentPadding = PaddingValues(8.dp),
         verticalArrangement = Arrangement.SpaceAround
     ){
-        items(categoriesss.value){
-            CategoryScreenItem(categoryName = it)
+        items(categorizes.value){
+            CategoryScreenItem(categoryName = it, onClick)
         }
     }
 
 }
 
 @Composable
-fun CategoryScreenItem(categoryName : String) {
+fun CategoryScreenItem(categoryName : String, onClick : (category : String) -> Unit ) {
     Box(
         modifier = Modifier
             .padding(4.dp)
             .size(160.dp)
             .clip(RoundedCornerShape(10.dp))
+            .clickable {
+                onClick(categoryName)
+            }
             .border(1.dp, Color(0xFFEEEEEE)),
         contentAlignment = Alignment.BottomCenter
     ){
