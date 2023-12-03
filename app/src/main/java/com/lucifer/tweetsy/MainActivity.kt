@@ -3,12 +3,12 @@ package com.lucifer.tweetsy
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.compose.runtime.Composable
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.lucifer.tweetsy.screens.CategoryScreen
 import com.lucifer.tweetsy.screens.DetailScreen
 import com.lucifer.tweetsy.ui.theme.TweetsyTheme
@@ -24,16 +24,27 @@ class MainActivity : ComponentActivity() {
         setContent {
             TweetsyTheme {
                 // A surface container using the 'background' color from the theme
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                ) {
-                    CategoryScreen()
-                    Spacer(modifier = Modifier.height(4.dp))
-                    DetailScreen()
-                }
+                App()
             }
+        }
+    }
+}
+
+@Composable
+fun App() {
+    val navControl = rememberNavController()
+    NavHost(navController = navControl, startDestination = "categoryScreen"){
+        composable(route = "categoryScreen"){
+            CategoryScreen{
+                navControl.navigate("detailScreen/$it")
+            }
+        }
+        composable(route = "detailScreen/{category}", arguments = listOf(
+            navArgument(name = "category"){
+                type = NavType.StringType
+            }
+        )){
+            DetailScreen()
         }
     }
 }
