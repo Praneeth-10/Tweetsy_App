@@ -1,6 +1,8 @@
 package com.lucifer.tweetsy.screens
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -20,14 +22,22 @@ import com.lucifer.tweetsy.models.TweetListItem
 import com.lucifer.tweetsy.viewModels.DetailViewModel
 
 @Composable
-fun DetailScreen() {
-    val detailViewModel : DetailViewModel = hiltViewModel()
+fun DetailScreen(
+    detailViewModel : DetailViewModel = hiltViewModel()
+) {
     val tweetItems: State<List<TweetListItem>> = detailViewModel.tweets.collectAsState()
-    LazyColumn(content = {
-        items(tweetItems.value){
-            DetailScreenItem(tweetListItem = it)
+
+    if (tweetItems.value.isEmpty()){
+        Box(modifier = Modifier.fillMaxSize(1f), contentAlignment = Alignment.Center){
+            Text(text = "Loading Details...", style = MaterialTheme.typography.displayMedium)
         }
-    })
+    }else{
+        LazyColumn(content = {
+            items(tweetItems.value){
+                DetailScreenItem(tweetListItem = it)
+            }
+        })
+    }
 }
 
 @Composable
@@ -40,6 +50,8 @@ fun DetailScreenItem(tweetListItem: TweetListItem) {
     ) {
         Text(text = tweetListItem.text, modifier = Modifier.padding(16.dp), style = MaterialTheme.typography.titleMedium)
 //        Spacer(modifier = Modifier.height(2.dp))
-        Text(text = tweetListItem.category, modifier = Modifier.padding(16.dp).align(Alignment.CenterHorizontally), style = MaterialTheme.typography.bodyMedium)
+        Text(text = tweetListItem.category, modifier = Modifier
+            .padding(16.dp)
+            .align(Alignment.CenterHorizontally), style = MaterialTheme.typography.bodyMedium)
     }
 }
