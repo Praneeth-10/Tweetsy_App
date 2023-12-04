@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -26,23 +27,29 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.lucifer.tweetsy.viewModels.CategoryViewModel
 
 @Composable
-fun CategoryScreen(onClick : (category : String) -> Unit ) {
-    val categoryViewModel : CategoryViewModel = hiltViewModel()
+fun CategoryScreen(onClick: (category: String) -> Unit) {
+    val categoryViewModel: CategoryViewModel = hiltViewModel()
     val categorizes: State<List<String>> = categoryViewModel.categories.collectAsState()
 
-    LazyVerticalGrid(columns = GridCells.Fixed(2),
-        contentPadding = PaddingValues(8.dp),
-        verticalArrangement = Arrangement.SpaceAround
-    ){
-        items(categorizes.value){
-            CategoryScreenItem(categoryName = it, onClick)
+    if (categorizes.value.isEmpty()) {
+        Box(modifier = Modifier.fillMaxSize(1f), contentAlignment = Alignment.Center) {
+            Text(text = "Loading...", style = MaterialTheme.typography.displayMedium)
+        }
+    } else {
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            contentPadding = PaddingValues(8.dp),
+            verticalArrangement = Arrangement.SpaceAround
+        ) {
+            items(categorizes.value) {
+                CategoryScreenItem(categoryName = it, onClick)
+            }
         }
     }
-
 }
 
 @Composable
-fun CategoryScreenItem(categoryName : String, onClick : (category : String) -> Unit ) {
+fun CategoryScreenItem(categoryName: String, onClick: (category: String) -> Unit) {
     Box(
         modifier = Modifier
             .padding(4.dp)
@@ -53,11 +60,13 @@ fun CategoryScreenItem(categoryName : String, onClick : (category : String) -> U
             }
             .border(1.dp, Color(0xFFEEEEEE)),
         contentAlignment = Alignment.BottomCenter
-    ){
-        Text(text = categoryName,
+    ) {
+        Text(
+            text = categoryName,
             fontSize = 18.sp,
             color = Color.Black,
             modifier = Modifier.padding(0.dp, 20.dp),
-            style = MaterialTheme.typography.bodyMedium)
+            style = MaterialTheme.typography.bodyMedium
+        )
     }
 }
